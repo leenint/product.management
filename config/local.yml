@@ -1,0 +1,5 @@
+redis:
+  host: 'redis-12261.c252.ap-southeast-1-1.ec2.cloud.redislabs.com'
+  port: 12261
+  password: 'j5KP1U9aJr6k8Bq3Gazx8xW2HsRFdu3X'
+  ttl: 43200
