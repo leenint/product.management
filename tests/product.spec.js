@@ -77,6 +77,6 @@ describe('Product API', () => {
     expect(response.body.data.items.length).toBe(1);
 
     // delete by id
-    await supertest(app).get(`/api/product/${testProductId}`).expect(200);
+    await supertest(app).delete(`/api/product/${testProductId}`).expect(200);
   });
 });
