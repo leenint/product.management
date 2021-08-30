@@ -20,6 +20,7 @@
       "arrow-parens": "off",
       "no-param-reassign": "off",
       "object-curly-newline": "off",
-      "operator-linebreak": "off"
+      "operator-linebreak": "off",
+      "no-plusplus": "off"
     }
 }

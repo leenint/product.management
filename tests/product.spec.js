@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const app = require('../app');
+const Validator = require('../src/helpers/validator');
 
 describe('Product API', () => {
   it('Testing to see if Jest works', () => {
@@ -78,5 +79,52 @@ describe('Product API', () => {
 
     // delete by id
     await supertest(app).delete(`/api/product/${testProductId}`).expect(200);
+  });
+
+  it('Validate', () => {
+    const shape = {
+      num: { type: 'number' },
+      str: { type: 'string' },
+      strNum: { type: 'str-num' },
+      optional: { type: 'string', optional: true },
+      arrayString: {
+        type: 'array',
+        item: {
+          type: 'string',
+        },
+      },
+      arrayObj: {
+        type: 'array',
+        item: {
+          type: 'object',
+          shape: {
+            number: { type: 'number' },
+            string: { type: 'string' },
+          },
+        },
+      },
+    };
+
+    const inputs = {
+      num: 10,
+      str: 'abc',
+      strNum: '10',
+      arrayString: ['a', 'b'],
+      arrayObj: [{ number: 4, string: '4' }],
+    };
+
+    let rs = Validator.validate(inputs, shape);
+    console.log(rs);
+    expect(rs == null).toBeTruthy();
+
+    delete inputs.num;
+    rs = Validator.validate(inputs, shape);
+    console.log(rs);
+    expect(!!rs).toBeTruthy();
+
+    inputs.num = 'abc';
+    rs = Validator.validate(inputs, shape);
+    console.log(rs);
+    expect(!!rs).toBeTruthy();
   });
 });
