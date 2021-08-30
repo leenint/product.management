@@ -1,6 +1,7 @@
 const HttpStatus = require('http-status-codes');
 const ProductProvider = require('../data-providers/product.provider');
 const Response = require('../helpers/response');
+const Validator = require('../helpers/validator');
 
 const controller = {
   getList: async (req, res) => {
@@ -47,8 +48,28 @@ const controller = {
 
   create: async (req, res) => {
     try {
-      const product = await ProductProvider.create(req.body);
-      return Response.send(req, res, product, HttpStatus.OK, 'Product was created successfully!');
+      const product = req.body;
+
+      const validateResult = Validator.validate(product, {
+        name: { type: 'string' },
+        code: { type: 'string' },
+        description: { type: 'string', optional: true },
+        branchId: { type: 'str-num' },
+        colors: {
+          type: 'array',
+          optional: true,
+          empty: false,
+          item: {
+            type: 'string',
+          },
+        },
+      });
+      if (validateResult) {
+        return Response.send(req, res, { message: validateResult }, HttpStatus.BAD_REQUEST, validateResult);
+      }
+
+      const productEntity = await ProductProvider.create(req.body);
+      return Response.send(req, res, productEntity, HttpStatus.OK, 'Product was created successfully!');
     } catch (ex) {
       return Response.send(req, res, null, HttpStatus.INTERNAL_SERVER_ERROR, ex);
     }

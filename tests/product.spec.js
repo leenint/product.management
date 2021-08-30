@@ -114,17 +114,40 @@ describe('Product API', () => {
     };
 
     let rs = Validator.validate(inputs, shape);
-    console.log(rs);
     expect(rs == null).toBeTruthy();
 
     delete inputs.num;
     rs = Validator.validate(inputs, shape);
-    console.log(rs);
     expect(!!rs).toBeTruthy();
 
     inputs.num = 'abc';
     rs = Validator.validate(inputs, shape);
-    console.log(rs);
     expect(!!rs).toBeTruthy();
+  });
+
+  test('Validate Create /api/product', async () => {
+    // get all current branch
+    let response = await supertest(app).get('/api/branch').expect(200);
+
+    expect(typeof response.body.data === 'object').toBeTruthy();
+    expect(Array.isArray(response.body.data.items)).toBeTruthy();
+    expect(!!response.body.data.items[0]).toBeTruthy();
+
+    const [branch] = response.body.data.items;
+
+    // create new test product
+    const testName = new Date().getTime().toString(32);
+    const testProduct = {
+      colors: ['Red', 'Blue'],
+      name: null,
+      code: testName,
+      description: '',
+      branchId: branch.id,
+    };
+    response = await supertest(app).post('/api/product')
+      .send(testProduct)
+      .expect(400);
+
+    console.log(response.body);
   });
 });

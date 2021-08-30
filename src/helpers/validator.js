@@ -14,12 +14,8 @@ const Validator = {
 
   validateProperty: (value, schema, key, parent = null) => {
     const propertyName = parent ? `${parent}.${key}` : key;
-    if (!schema.optional) {
-      if (value == null) {
-        return `${propertyName} is a required field.`;
-      }
-    } else if (value == null) {
-      return null;
+    if (value == null) {
+      return schema.optional ? null : `${propertyName} is a required field.`;
     }
 
     if (schema.type === 'string') {
@@ -64,6 +60,11 @@ const Validator = {
     if (schema.type === 'array') {
       if (!Array.isArray(value)) {
         return `${propertyName} must be a array.`;
+      }
+      if (!schema.empty) {
+        if (value.length === 0) {
+          return `${propertyName} don't allow empty array.`;
+        }
       }
 
       if (schema.item) {
